@@ -61,3 +61,9 @@ resource "null_resource" "ssh_execute" {
     }
   }
 }
+
+module "iamrole" {
+  depends_on = [ null_resource.ssh_execute  ]
+  
+  source = "./modules/iamrole"
+}
