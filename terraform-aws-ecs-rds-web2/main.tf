@@ -38,15 +38,19 @@ module "bastion" {
   subnet_ids = module.networking.public_subnets
 }
 
+resource "time_sleep" "wait_for_30" {
+  create_duration = "30s"
+}
 # アップロードしたスクリプトをEC2インスタンスで実行する
 resource "null_resource" "ssh_execute" {
-  depends_on = [ module.bastion ]
+  depends_on = [ module.bastion, time_sleep.wait_for_30 ]
 
   provisioner "remote-exec" {
     inline = [ 
       "sudo dnf update -y",
-      "sudo dnf install -y postgresql",
-      "psql --version"
+      "sudo dnf install -y postgresql16",
+      "psql --version",
+      "sudo psql -h ${module.database.rds_endpoint} -p 5432 -U ${module.database.db_username} -d ${module.database.db_name} -f /tmp/create.sql"
      ]
 
     connection {
