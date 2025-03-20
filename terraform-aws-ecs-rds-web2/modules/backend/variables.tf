@@ -34,3 +34,7 @@ variable "db_password" {
   type = string
   description = "Secrets Manager ARN for DB password"
 }
+
+variable "ecs_execution_role_arn" {
+  type = string
+}
